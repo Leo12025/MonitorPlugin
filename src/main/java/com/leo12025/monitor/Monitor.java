@@ -1,6 +1,7 @@
 package com.leo12025.monitor;
 
 
+import org.bukkit.NamespacedKey;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -8,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.PluginLogger;
@@ -25,6 +27,9 @@ import static java.time.LocalTime.now;
 
 
 public final class Monitor extends JavaPlugin implements Listener {
+
+    private NamespacedKey KEY_ROOT = new NamespacedKey(this, "data");
+    private NamespacedKey KEY_REG_TIME = new NamespacedKey(this, "reg_time");
 
     public static File dataFolder;
     private PluginLoader loader;
@@ -82,23 +87,17 @@ public final class Monitor extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        logger.log(Level.INFO, "玩家 " + player.getName() + "加入了游戏，他的 UUID 为: " + player.getUniqueId() + " 延迟是: " + player.getPing());
-        //TODO: 读取信息，如果玩家的Json里面没有regTime，那么就视为第一次加入服务器，那么记录注册时间并保存。
-        //[16:07:03] [Server thread/ERROR]: [com.leo12025.monitor.Monitor] [Monitor] 玩家 Xyo0加入了游戏，他的 UUID 为:18f72caf-aba0-4e2d-a403-6cec9734338f 延迟是:0
-        JSONObject obj;
+        var persistent = player.getPersistentDataContainer();
+        var data = persistent.get(KEY_ROOT, PersistentDataType.TAG_CONTAINER);
+        if (data == null) data = persistent.getAdapterContext().newPersistentDataContainer();
 
-        obj = getPlayerData(player.getUniqueId().toString());
-        if (!obj.has("regTime")) {
+        logger.log(Level.INFO, "玩家 " + player.getName() + "加入了游戏，他的 UUID 为: " + player.getUniqueId() + " 延迟是: " + player.getPing());
+
+        if (!data.has(KEY_REG_TIME)) {
             logger.log(Level.INFO, "新用户登录服务器，正在记录注册时间。");
-            obj.put("regTime", now());
-            try {
-                savePlayerDataForFile(player.getUniqueId().toString(), obj.toString());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            data.set(KEY_REG_TIME, PersistentDataType.LONG, System.currentTimeMillis());
             logger.log(Level.INFO, "新用户注册时间记录完毕，推送信息中。");
         }
-
 
         /*
         if (config.getBoolean("youAreAwesome")) {
@@ -106,6 +105,8 @@ public final class Monitor extends JavaPlugin implements Listener {
         } else {
             player.sendMessage("You are not awesome...");
         }*/
+
+        persistent.set(KEY_ROOT, PersistentDataType.TAG_CONTAINER, data);
     }
 
     @EventHandler
