@@ -1,6 +1,7 @@
 package com.leo12025.monitor;
 
 
+import com.google.gson.Gson;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -17,16 +18,18 @@ import java.io.File;
 import java.util.Objects;
 import java.util.logging.Level;
 
-import com.leo12025.monitor.Database;
+import static com.leo12025.monitor.PlayerData.getPlayerData;
+import static com.leo12025.monitor.PlayerData.savePlayerDataForFile;
+import static java.time.LocalTime.now;
 
 
 public final class Monitor extends JavaPlugin implements Listener {
 
+    public static File dataFolder;
     private PluginLoader loader;
     private Server server;
     private File file;
     private PluginDescriptionFile description;
-    private File dataFolder;
     private ClassLoader classLoader;
     private File configFile;
     private PluginLogger logger;
@@ -43,7 +46,7 @@ public final class Monitor extends JavaPlugin implements Listener {
         this.server = getServer();
         this.file = getFile();
         this.description = getDescription();
-        this.dataFolder = getDataFolder();
+        dataFolder = getDataFolder();
         this.classLoader = getClassLoader();
         this.configFile = new File(dataFolder, "config.yml");
         this.logger = new PluginLogger(this);
@@ -78,8 +81,20 @@ public final class Monitor extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        logger.log(Level.INFO,"玩家 " + player.getName() + "加入了游戏，他的 UUID 为: " + player.getUniqueId()+ " 延迟是: "+player.getPing());
+        logger.log(Level.INFO, "玩家 " + player.getName() + "加入了游戏，他的 UUID 为: " + player.getUniqueId() + " 延迟是: " + player.getPing());
+
         //[16:07:03] [Server thread/ERROR]: [com.leo12025.monitor.Monitor] [Monitor] 玩家 Xyo0加入了游戏，他的 UUID 为:18f72caf-aba0-4e2d-a403-6cec9734338f 延迟是:0
+        /*
+        Gson gson;
+        obj = getPlayerData(player.getUniqueId().toString());
+        if (!obj.has("regTime")) {
+            logger.log(Level.INFO, "新用户登录服务器，正在记录注册时间。");
+            obj.put("regTime", now());
+            savePlayerDataForFile(player.getUniqueId().toString(), obj.toString());
+            logger.log(Level.INFO, "新用户注册时间记录完毕，推送信息中。");
+        }
+
+
         /*
         if (config.getBoolean("youAreAwesome")) {
             player.sendMessage("You are awesome!");
@@ -91,7 +106,7 @@ public final class Monitor extends JavaPlugin implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        logger.log(Level.INFO,"玩家 " + player.getName() + "离开了游戏，他的 UUID 为: " + player.getUniqueId());
+        logger.log(Level.INFO, "玩家 " + player.getName() + "离开了游戏，他的 UUID 为: " + player.getUniqueId());
 
     }
 
