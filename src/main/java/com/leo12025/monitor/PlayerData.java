@@ -1,6 +1,8 @@
 package com.leo12025.monitor;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import org.json.JSONObject;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -54,12 +56,14 @@ public class PlayerData {
         return false;
     }
 
-    public static String  getPlayerData(String playUUID) {
+    public static JSONObject getPlayerData(String playUUID) {
         String fileObject = readPlayerDataForFile(playUUID);
+        JSONObject obj;
+        //TODO: 如果文件不存在或者为空，那么输出一个空的Json对象，否则读取文件
         if (fileObject.equals("")) {
-
+            obj=new JSONObject();
         } else {
-            //obj = new JSONObject(fileObject);
+            obj= new JSONObject(fileObject);
         }
 
         /*
@@ -79,7 +83,7 @@ public class PlayerData {
         * */
 
 
-        return "";
+        return obj;
     }
 
 
