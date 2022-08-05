@@ -1,0 +1,4 @@
+  name: MonitorPlugin
+  main: com.leo12025.monitor.Monitor
+  version: 1.0
+  author: Leo12025

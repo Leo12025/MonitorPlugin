@@ -1,0 +1,4 @@
+name: Monitor
+version: '${project.version}'
+main: com.leo12025.monitor.Monitor
+api-version: 1.19
