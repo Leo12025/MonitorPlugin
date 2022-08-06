@@ -15,7 +15,7 @@ public class PlayerData {
 
     public static String readPlayerDataForFile(String playerUUID) {
         //TODO: 用文件流的形式读取出一个指定玩家的JsonString.....
-        File jsonFile = new File(dataFolder.getPath() + "\\playerData\\" + playerUUID + ".json");
+        File jsonFile = new File(dataFolder.getPath() + "/playerData/" + playerUUID + ".json");
         try {
 
             FileReader fileReader = new FileReader(jsonFile);
@@ -45,7 +45,7 @@ public class PlayerData {
 
     public static Boolean savePlayerDataForFile(String playerUUID, String playerData) throws IOException {
         try {
-            OutputStreamWriter osw = new OutputStreamWriter(Files.newOutputStream(Paths.get(dataFolder.getPath() + "\\playerData\\" + playerUUID + ".json")), StandardCharsets.UTF_8);
+            OutputStreamWriter osw = new OutputStreamWriter(Files.newOutputStream(Paths.get(dataFolder.getPath() + "/playerData/" + playerUUID + ".json")), StandardCharsets.UTF_8);
             osw.write(playerData);
             osw.flush();//清空缓冲区，强制输出数据
             osw.close();//关闭输出流

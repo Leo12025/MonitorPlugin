@@ -1,6 +1,8 @@
 package com.leo12025.monitor;
 
 
+import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -12,6 +14,7 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.PluginLogger;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -21,7 +24,6 @@ import java.util.logging.Level;
 
 import static com.leo12025.monitor.PlayerData.getPlayerData;
 import static com.leo12025.monitor.PlayerData.savePlayerDataForFile;
-import static java.time.LocalTime.now;
 
 
 public final class Monitor extends JavaPlugin implements Listener {
@@ -90,7 +92,7 @@ public final class Monitor extends JavaPlugin implements Listener {
         obj = getPlayerData(player.getUniqueId().toString());
         if (!obj.has("regTime")) {
             logger.log(Level.INFO, "新用户登录服务器，正在记录注册时间。");
-            obj.put("regTime", now());
+            obj.put("regTime", System.currentTimeMillis());
             try {
                 savePlayerDataForFile(player.getUniqueId().toString(), obj.toString());
             } catch (IOException e) {
@@ -98,6 +100,10 @@ public final class Monitor extends JavaPlugin implements Listener {
             }
             logger.log(Level.INFO, "新用户注册时间记录完毕，推送信息中。");
         }
+
+
+
+
 
 
         /*
