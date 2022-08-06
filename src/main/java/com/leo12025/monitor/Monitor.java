@@ -2,48 +2,54 @@ package com.leo12025.monitor;
 
 
 import io.papermc.paper.event.player.AsyncChatEvent;
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Server;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerCommandSendEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.PluginLogger;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.logging.Level;
 
 import static com.leo12025.monitor.PlayerData.getPlayerData;
 import static com.leo12025.monitor.PlayerData.savePlayerDataForFile;
+import static com.leo12025.monitor.PushFeishu.sendFeishuMessage;
 
 
 public final class Monitor extends JavaPlugin implements Listener {
 
     public static File dataFolder;
+    public static PluginLogger logger;
     private PluginLoader loader;
     private Server server;
     private File file;
     private PluginDescriptionFile description;
     private ClassLoader classLoader;
     private File configFile;
-    private PluginLogger logger;
-    private FileConfiguration config;
+    public static FileConfiguration config;
 
 
     @Override
     public void onLoad() {
         // Plugin startup logic
         //System.out.println("[Monitor]插件已启动");
-        this.logger = new PluginLogger(this);
+        logger = new PluginLogger(this);
         logger.log(Level.INFO, "插件已被加载");
         this.loader = getPluginLoader();
         this.server = getServer();
@@ -52,8 +58,10 @@ public final class Monitor extends JavaPlugin implements Listener {
         dataFolder = getDataFolder();
         this.classLoader = getClassLoader();
         this.configFile = new File(dataFolder, "config.yml");
-        this.logger = new PluginLogger(this);
-        this.config = this.getConfig();
+        logger = new PluginLogger(this);
+        config = this.getConfig();
+        //sendFeishuMessage("Test Feishu");
+
 
     }
 
@@ -66,15 +74,53 @@ public final class Monitor extends JavaPlugin implements Listener {
         config.addDefault("boardCastType", "feishu");
         config.addDefault("boardCastType", "");
         config.options().copyDefaults(true);
+
         saveConfig();
 
         // Enable our class to check for new players using onPlayerJoin()
         this.server.getPluginManager().registerEvents(this, this);
     }
 
-    public void boardCastTo(String message) {
+
+    @EventHandler
+    public void onPlayerCommandSendEvent(PlayerCommandSendEvent event) {
+        //当玩家加入服务器时，我发送给玩家的用于自动填充命令的命令表
+        Player player = event.getPlayer();
+        Collection commands = event.getCommands();
+        //logger.log(Level.INFO, "玩家 "+player.getName()+" 发起了命令 " + commands.toString()+" 的执行");
+
+    }
+
+    @EventHandler
+    public void onPlayerCommandPreprocessEvent(PlayerCommandPreprocessEvent event) {
+        Player player = event.getPlayer();
+        String message = event.getMessage();///msg Xyo0 1
+        logger.log(Level.INFO, "玩家 " + player.getName() + " 发起了命令 " + message + " 的执行");
+        //[21:54:47 INFO]: [com.leo12025.monitor.Monitor] [Monitor] 玩家 Xyo0 发起了命令 /msg Xyo0 1 的执行
+
+    }
+
+    @EventHandler
+    public void onBlockBreakEvent(BlockBreakEvent event) {
+        Player player = event.getPlayer();
+        Block block = event.getBlock();
+        BlockData blockData = block.getBlockData();
+
+        logger.log(Level.INFO, "玩家 " + player.getName() + " 破坏了方块 " + blockData.getMaterial() + "");
+        //[22:04:42 INFO]: [com.leo12025.monitor.Monitor] [Monitor] 玩家 Xyo0 破坏了方块 CraftBlockData{minecraft:grass_block[snowy=false]} 草方块
+        //[22:04:39 INFO]: [com.leo12025.monitor.Monitor] [Monitor] 玩家 Xyo0 破坏了方块 CraftBlockData{minecraft:grass} 草
+        //          blockData.getMaterial().translationKey(); block.minecraft.grass_block
+        //          blockData.getMaterial(); GRASS
+
+        //[22:35:53 INFO]: [com.leo12025.monitor.Monitor] [Monitor] 玩家 Xyo0 破坏了方块 block.minecraft.grass_block
+
+
+    }
+
+    public void boardCastToFeishu(String message) {
         if (Objects.equals(getConfig().getString("boardCastType"), "feishu")) {
             logger.log(Level.INFO, "向 Feishu 服务推送消息: " + message);
+            sendFeishuMessage(message);
 
             //TODO: 加入飞书推送相关代码
         }
@@ -98,20 +144,32 @@ public final class Monitor extends JavaPlugin implements Listener {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            boardCastToFeishu("玩家 " + player.getName() + "加入了游戏，他的 UUID 为: " + player.getUniqueId());
             logger.log(Level.INFO, "新用户注册时间记录完毕，推送信息中。");
         }
+        if (!obj.has("userName")) {
+
+            logger.log(Level.INFO, "新用户登录服务器，正在记录注册userName。");
+            obj.put("userName", player.getName());
+            try {
+                savePlayerDataForFile(player.getUniqueId().toString(), obj.toString());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            logger.log(Level.INFO, "新用户userName记录完毕，推送信息中。");
+            boardCastToFeishu("2玩家 " + player.getName() + "加入了游戏，他的 UUID 为: " + player.getUniqueId());
+
+        }
+    }
+
+    @EventHandler
+    public void onAsyncChatEvent(AsyncChatEvent event) {
+        Player player = event.getPlayer();
+        TextComponent message = (TextComponent) event.message();
+        String receivedMessage = message.content();
+        logger.log(Level.INFO, "玩家 " + player.getName() + " 发送了新消息: " + receivedMessage);
 
 
-
-
-
-
-        /*
-        if (config.getBoolean("youAreAwesome")) {
-            player.sendMessage("You are awesome!");
-        } else {
-            player.sendMessage("You are not awesome...");
-        }*/
     }
 
     @EventHandler
