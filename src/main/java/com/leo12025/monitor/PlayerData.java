@@ -1,7 +1,5 @@
 package com.leo12025.monitor;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -61,9 +59,9 @@ public class PlayerData {
         JSONObject obj;
         //TODO: 如果文件不存在或者为空，那么输出一个空的Json对象，否则读取文件
         if (fileObject.equals("")) {
-            obj=new JSONObject();
+            obj = new JSONObject();
         } else {
-            obj= new JSONObject(fileObject);
+            obj = new JSONObject(fileObject);
         }
 
         /*
