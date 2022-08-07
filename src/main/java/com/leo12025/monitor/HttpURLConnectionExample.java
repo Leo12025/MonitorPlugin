@@ -8,6 +8,9 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+
+import static com.leo12025.monitor.Monitor.config;
 
 public class HttpURLConnectionExample {
 
@@ -24,8 +27,8 @@ public class HttpURLConnectionExample {
         con.setRequestProperty("User-Agent", USER_AGENT);
         con.setRequestProperty("Content-Type", "application/json; charset=utf-8");
         JSONObject json = new JSONObject();
-        json.put("app_id", "cli_a2643cc24078900c");
-        json.put("app_secret", "wX2aex2zeTQ2A0Dbxqcc5bXARMuZqpIp");
+        json.put("app_id", config.getString("Feishu.app_id"));
+        json.put("app_secret", config.getString("Feishu.app_secret"));
 
         String urlParameters = json.toString();
 
@@ -74,23 +77,24 @@ public class HttpURLConnectionExample {
         content.put("text", message);
         json.put("content", content.toString());
         json.put("msg_type", "text");
-
+        System.out.println(json);
         String urlParameters = json.toString();
 
         //发送Post请求
         con.setDoOutput(true);
         DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-        wr.writeBytes(urlParameters);
+        //wr.writeBytes(urlParameters);
+        wr.writeChars(urlParameters);
         wr.flush();
         wr.close();
 
         int responseCode = con.getResponseCode();
-        //System.out.println("\nSending 'POST' request to URL : " + url);
-        //System.out.println("Post parameters : " + urlParameters);
-        //System.out.println("Response Code : " + responseCode);
+        System.out.println("\nSending 'POST' request to URL : " + url);
+        System.out.println("Post parameters : " + urlParameters);
+        System.out.println("Response Code : " + responseCode);
 
         BufferedReader in = new BufferedReader(
-                new InputStreamReader(con.getInputStream()));
+                new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8));//TODO
         String inputLine;
         StringBuilder response = new StringBuilder();
 

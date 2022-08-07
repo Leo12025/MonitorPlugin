@@ -5,8 +5,7 @@ import org.json.JSONObject;
 import java.util.Objects;
 import java.util.logging.Level;
 
-import static com.leo12025.monitor.HttpURLConnectionExample.getFeishuTokenRequest;
-import static com.leo12025.monitor.HttpURLConnectionExample.pushFeishuMessageRequest;
+import static com.leo12025.monitor.HttpURLConnectionExample.*;
 import static com.leo12025.monitor.Monitor.config;
 import static com.leo12025.monitor.Monitor.logger;
 
@@ -18,13 +17,13 @@ public class PushFeishu {
         long TimeNow = System.currentTimeMillis();
         System.out.println(Objects.equals(FeishuToken, ""));
         if (Objects.equals(FeishuToken, "")) {
-            FeishuToken = config.getString("FeishuToken");
-            FeishuTokenTimestamp = config.getLong("FeishuTokenTimestamp");
+            FeishuToken = config.getString("Feishu.Token");
+            FeishuTokenTimestamp = config.getLong("Feishu.TokenTimestamp");
             logger.log(Level.INFO, "[feishuToken]尝试从配置文件中加载令牌 " + FeishuToken + "，" + FeishuTokenTimestamp + " ！"); //这里肯定是空的，执行正确
 
             System.out.println(Objects.equals(FeishuToken, ""));
 
-            if (Objects.equals(FeishuToken, "")) {
+            if (Objects.equals(FeishuToken, "") || FeishuToken == null) {
                 //直接获取
                 // FeishuToken = "T" + TimeNow;
                 //FeishuTokenTimestamp = TimeNow + 30;}
@@ -34,8 +33,8 @@ public class PushFeishu {
                     if (req.getInt("code") == 0) {
                         FeishuToken = req.getString("tenant_access_token");
                         FeishuTokenTimestamp = TimeNow + (req.getInt("expire") * 1000L);
-                        config.set("FeishuToken", FeishuToken);
-                        config.set("FeishuTokenTimestamp", FeishuTokenTimestamp);
+                        config.set("Feishu.Token", FeishuToken);
+                        config.set("Feishu.TokenTimestamp", FeishuTokenTimestamp);
                         logger.log(Level.INFO, "[feishuToken]检测到空令牌，正在获取新令牌 " + FeishuToken + "，" + FeishuTokenTimestamp + " ！");
                     }
 
@@ -59,14 +58,13 @@ public class PushFeishu {
                 if (req.getInt("code") == 0) {
                     FeishuToken = req.getString("tenant_access_token");
                     FeishuTokenTimestamp = TimeNow + (req.getInt("expire") * 1000L);
-
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
 
-            config.set("FeishuToken", FeishuToken);
-            config.set("FeishuTokenTimestamp", FeishuTokenTimestamp);
+            config.set("Feishu.Token", FeishuToken);
+            config.set("Feishu.TokenTimestamp", FeishuTokenTimestamp);
 
             logger.log(Level.INFO, "[feishuToken]令牌即将过期或者已过期，正在申请新令牌 " + FeishuToken + "，" + FeishuTokenTimestamp + " ！");
 
@@ -81,9 +79,10 @@ public class PushFeishu {
     public static void sendFeishuMessage(String message)  {
         String FeishuTokenUse = getFeishuToken();
         try {
-            pushFeishuMessageRequest(FeishuTokenUse, config.getString("boardGroup"), message);
+            pushFeishuMessageRequest(FeishuTokenUse, config.getString("Feishu.sendGroup"), message);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            //throw new RuntimeException(e);
+            e.printStackTrace();
         }
         logger.log(Level.INFO, "[FeishuPush]向飞书推送了信息 " + message + " ！");
 

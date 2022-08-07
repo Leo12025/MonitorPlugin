@@ -60,7 +60,8 @@ public final class Monitor extends JavaPlugin implements Listener {
         this.configFile = new File(dataFolder, "config.yml");
         logger = new PluginLogger(this);
         config = this.getConfig();
-        //sendFeishuMessage("Test Feishu");
+        sendFeishuMessage("Player Xyo0 break block.minecraft.enchanting_table, In x=-132 y=78 z=97");
+        sendFeishuMessage("玩家 Xyo0 破坏了方块 (附魔台) block.minecraft.enchanting_table，位于 x=-132 y=78 z=97");
 
 
     }
@@ -72,7 +73,10 @@ public final class Monitor extends JavaPlugin implements Listener {
         // this.logger = new PluginLogger(this);
         logger.log(Level.INFO, "插件已启动");
         config.addDefault("boardCastType", "feishu");
-        config.addDefault("boardCastType", "");
+        config.addDefault("Feishu.app_id", "请填写app_id");
+        config.addDefault("Feishu.app_secret", "请填写app_secret");
+        config.addDefault("Feishu.sendGroup", "请填写需要推送到的群");
+        config.addDefault("Monitor.items", "需要监测的方块信息，以;分割，需要是完整的方块注册名");
         config.options().copyDefaults(true);
 
         saveConfig();
@@ -106,7 +110,18 @@ public final class Monitor extends JavaPlugin implements Listener {
         Block block = event.getBlock();
         BlockData blockData = block.getBlockData();
 
-        logger.log(Level.INFO, "玩家 " + player.getName() + " 破坏了方块 " + blockData.getMaterial() + "");
+        logger.log(Level.INFO, "玩家 " + player.getName() + " 破坏了方块 " + blockData.getMaterial().translationKey() + "");
+        String messageText;
+        switch (blockData.getMaterial().translationKey().toString()){
+            case "block.minecraft.enchanting_table":{
+                messageText="玩家 " + player.getName() + " 破坏了方块 (附魔台) " + blockData.getMaterial().translationKey() + "，位于 x="+block.getX()+" y="+block.getY()+" z="+block.getZ();
+                logger.log(Level.INFO, messageText);
+                sendFeishuMessage(messageText);
+                break;
+            }
+            default:break;
+
+        }
         //[22:04:42 INFO]: [com.leo12025.monitor.Monitor] [Monitor] 玩家 Xyo0 破坏了方块 CraftBlockData{minecraft:grass_block[snowy=false]} 草方块
         //[22:04:39 INFO]: [com.leo12025.monitor.Monitor] [Monitor] 玩家 Xyo0 破坏了方块 CraftBlockData{minecraft:grass} 草
         //          blockData.getMaterial().translationKey(); block.minecraft.grass_block
