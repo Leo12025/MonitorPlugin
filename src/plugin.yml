@@ -2,3 +2,15 @@
   main: com.leo12025.monitor.Monitor
   version: 1.0
   author: Leo12025
+
+  permissions:
+    monitor:
+      description: 描述
+      #默认权限,有op,not_op,true,false
+      default: op
+  commands:
+    monitor:
+      description: This is a demo command.
+      usage: /<command> [player]
+      permission: <plugin name>.basic
+      permission-message: You don't have <permission>
