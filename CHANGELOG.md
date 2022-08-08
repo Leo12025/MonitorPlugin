@@ -1,3 +1,11 @@
+## [1.0.2](https://github.com/Leo12025/MonitorPlugin/compare/1.0.1...1.0.2) (2022-08-08)
+
+
+
+## [1.0.1](https://github.com/Leo12025/MonitorPlugin/compare/1.0.1-SNAPSHOT...1.0.1) (2022-08-08)
+
+
+
 ## [1.0.1-SNAPSHOT](https://github.com/Leo12025/MonitorPlugin/compare/06a0d3bbd17b022e6b27bab6a347e95d268c10cb...1.0.1-SNAPSHOT) (2022-08-08)
 
 
