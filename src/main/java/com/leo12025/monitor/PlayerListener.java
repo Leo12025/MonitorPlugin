@@ -116,7 +116,6 @@ public class PlayerListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         logger.log(Level.INFO, "玩家 " + player.getName() + "加入了游戏，他的 UUID 为: " + player.getUniqueId() + " 延迟是: " + player.getPing() + " IP地址为：" + player.getAddress().getHostString());
-        //TODO: 读取信息，如果玩家的Json里面没有regTime，那么就视为第一次加入服务器，那么记录注册时间并保存。
         //[16:07:03] [Server thread/ERROR]: [com.leo12025.monitor.Monitor] [Monitor] 玩家 Xyo0加入了游戏，他的 UUID 为:18f72caf-aba0-4e2d-a403-6cec9734338f 延迟是:0
         JSONObject obj;
 
