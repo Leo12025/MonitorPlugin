@@ -19,9 +19,11 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 
+import static com.leo12025.monitor.MaterialChinese.translate;
 import static com.leo12025.monitor.Monitor.*;
 import static com.leo12025.monitor.PlayerData.getPlayerData;
 import static com.leo12025.monitor.PlayerData.savePlayerDataForFile;
@@ -67,8 +69,9 @@ public class PlayerListener implements Listener {
         if(!player.isOp() && !player.hasPermission("monitor.pass") && player.getGameMode() != GameMode.CREATIVE) {
             logger.log(Level.INFO, "玩家 " + player.getName() + " 破坏了方块 " + blockData.getMaterial().translationKey() + "");
             String messageText;
+/*
             if ("block.minecraft.enchanting_table".equals(blockData.getMaterial().translationKey())) {
-                messageText = "玩家 " + player.getName() + " 破坏了方块 (附魔台) " + blockData.getMaterial().translationKey() + "，位于 x=" + block.getX() + " y=" + block.getY() + " z=" + block.getZ();
+                messageText = "玩家 " + player.getName() + " 破坏了方块 ("+translate(blockData.getMaterial())+") " + blockData.getMaterial().translationKey() + "，位于 x=" + block.getX() + " y=" + block.getY() + " z=" + block.getZ();
                 logger.log(Level.INFO, messageText);
                 sendFeishuMessage(messageText);
             }
@@ -76,10 +79,10 @@ public class PlayerListener implements Listener {
                 messageText = "玩家 " + player.getName() + " 破坏了方块 (信标) " + blockData.getMaterial().translationKey() + "，位于 x=" + block.getX() + " y=" + block.getY() + " z=" + block.getZ();
                 logger.log(Level.INFO, messageText);
                 sendFeishuMessage(messageText);
-            }
-            String[] MonitorItems = config.getString("Monitor.items").split(",");
-            if (Arrays.binarySearch(MonitorItems, blockData.getMaterial().translationKey()) > 0) {
-                messageText = "玩家 " + player.getName() + " 破坏了方块 (未知) " + blockData.getMaterial().translationKey() + "，位于 x=" + block.getX() + " y=" + block.getY() + " z=" + block.getZ();
+            }*/
+            String[] MonitorItems = Objects.requireNonNull(config.getString("Monitor.items")).split(",");
+            if (contains(MonitorItems,blockData.getMaterial().translationKey())) {
+                messageText = "玩家 " + player.getName() + " 破坏了方块 ("+translate(blockData.getMaterial())+") " + blockData.getMaterial().translationKey() + "，位于 x=" + block.getX() + " y=" + block.getY() + " z=" + block.getZ();
                 logger.log(Level.INFO, messageText);
                 sendFeishuMessage(messageText);
             }
@@ -93,6 +96,10 @@ public class PlayerListener implements Listener {
         //[22:35:53 INFO]: [com.leo12025.monitor.Monitor] [Monitor] 玩家 Xyo0 破坏了方块 block.minecraft.grass_block
 
 
+    }
+    public static boolean contains(String[] stringArray,String source){
+        List<String> tempList = Arrays.asList(stringArray);
+        return tempList.contains(source);
     }
 
     public void boardCastToFeishu(String message) {

@@ -11,6 +11,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.util.logging.Level;
 
+import static com.leo12025.monitor.MaterialChinese.initMaterialChinese;
+
 public final class Monitor extends JavaPlugin {
 
     public static File dataFolder;
@@ -56,6 +58,7 @@ public final class Monitor extends JavaPlugin {
         //getCommand("monitor").setExecutor(new Commands());
 
         // LoadCommand();
+        initMaterialChinese();
         this.server.getPluginManager().registerEvents(new PlayerListener(), this);
     }
 
