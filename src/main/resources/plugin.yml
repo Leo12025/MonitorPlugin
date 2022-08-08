@@ -1,4 +1,9 @@
 name: Monitor
 version: '${project.version}'
 main: com.leo12025.monitor.Monitor
-api-version: 1.19
+author: Leo12025
+api-version: 1.18
+
+commands:
+  tpr:
+    description: "插件主命令"

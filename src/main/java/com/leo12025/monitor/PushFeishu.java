@@ -77,12 +77,22 @@ public class PushFeishu {
     }
 
     public static void sendFeishuMessage(String message)  {
-        String FeishuTokenUse = getFeishuToken();
-        try {
-            pushFeishuMessageRequest(FeishuTokenUse, config.getString("Feishu.sendGroup"), message);
-        } catch (Exception e) {
-            //throw new RuntimeException(e);
-            e.printStackTrace();
+        if(!Objects.equals(config.getString("Feishu.webHook"), "")){
+        //TODO
+            try {
+                pushFeishuMessageWebHookRequest(config.getString("Feishu.webHook"),"[" + config.getString("Monitor.serverName") + "]" +message);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }else{
+
+            String FeishuTokenUse = getFeishuToken();
+            try {
+                pushFeishuMessageRequest(FeishuTokenUse, config.getString("Feishu.sendGroup"), "[" + config.getString("Monitor.serverName") + "]" + message);
+            } catch (Exception e) {
+                //throw new RuntimeException(e);
+                e.printStackTrace();
+            }
         }
         logger.log(Level.INFO, "[FeishuPush]向飞书推送了信息 " + message + " ！");
 

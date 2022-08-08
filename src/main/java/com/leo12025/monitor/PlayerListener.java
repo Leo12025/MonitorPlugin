@@ -3,6 +3,7 @@ package com.leo12025.monitor;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
@@ -63,7 +64,7 @@ public class PlayerListener implements Listener {
         Player player = event.getPlayer();
         Block block = event.getBlock();
         BlockData blockData = block.getBlockData();
-        if(!player.isOp()) {
+        if(!player.isOp() && !player.hasPermission("monitor.pass") && player.getGameMode() != GameMode.CREATIVE) {
             logger.log(Level.INFO, "玩家 " + player.getName() + " 破坏了方块 " + blockData.getMaterial().translationKey() + "");
             String messageText;
             if ("block.minecraft.enchanting_table".equals(blockData.getMaterial().translationKey())) {

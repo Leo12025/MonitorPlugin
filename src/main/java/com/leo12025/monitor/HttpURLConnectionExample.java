@@ -122,6 +122,66 @@ public class HttpURLConnectionExample {
         return response.toString();
 
     }
+    public static String pushFeishuMessageWebHookRequest(String webHook,  String message) throws Exception {
+
+        String url = webHook;
+        URL obj = new URL(url);
+        HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
+
+        //添加请求头
+        con.setRequestMethod("POST");
+        con.setRequestProperty("User-Agent", USER_AGENT);
+        con.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+        JSONObject json = new JSONObject();
+        JSONObject content = new JSONObject();
+        content.put("text", message);
+        json.put("content", content.toString());
+        json.put("msg_type", "text");
+        System.out.println(json);
+        String urlParameters = json.toString();
+
+        //发送Post请求
+        con.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+        wr.write(urlParameters.getBytes(StandardCharsets.UTF_8));
+        //wr.writeChars(urlParameters);
+        //wr.writeBytes(urlParameters);
+        wr.flush();
+        wr.close();
+
+        int responseCode = con.getResponseCode();
+        String responseMessage = con.getResponseMessage();
+        //System.out.println("\nSending 'POST' request to URL : " + url);
+        //System.out.println("Post parameters : " + urlParameters);
+        //System.out.println("Response Code : " + responseCode);
+        //System.out.println("Response Message : " + responseMessage);
+        String inputLine;
+        StringBuilder response = new StringBuilder();
+        if(responseCode >=400 ){
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getErrorStream(), StandardCharsets.UTF_8));
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+        }else{
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getInputStream(), StandardCharsets.UTF_8));
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+        }
+
+
+
+        //打印结果
+        System.out.println(response);
+        return response.toString();
+
+    }
 
     // HTTP GET请求
     private void sendGet() throws Exception {

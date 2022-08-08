@@ -38,7 +38,7 @@ public final class Monitor extends JavaPlugin {
         this.configFile = new File(dataFolder, "config.yml");
         logger = new PluginLogger(this);
         config = this.getConfig();
-        //sendFeishuMessage("Player Xyo0 break block.minecraft.enchanting_table, In x=-132 y=78 z=97");
+        //sendFeishuMessage("测试服务器推送\n换行");
         //sendFeishuMessage("玩家 Xyo0 破坏了方块 (附魔台) block.minecraft.enchanting_table，位于 x=-132 y=78 z=97");
 
 
@@ -50,18 +50,12 @@ public final class Monitor extends JavaPlugin {
         // System.out.println("[Monitor]插件已启动");
         // this.logger = new PluginLogger(this);
         logger.log(Level.INFO, "插件已启动");
-        config.addDefault("boardCastType", "feishu");
-        config.addDefault("Feishu.app_id", "请填写app_id");
-        config.addDefault("Feishu.app_secret", "请填写app_secret");
-        config.addDefault("Feishu.sendGroup", "请填写需要推送到的群");
-        config.addDefault("Monitor.items", "需要监测的方块信息，以,分割，需要是完整的方块注册名");
-        config.options().copyDefaults(true);
 
-        saveConfig();
-
+        LoadConfig();
         // Enable our class to check for new players using onPlayerJoin()
         //getCommand("monitor").setExecutor(new Commands());
 
+        // LoadCommand();
         this.server.getPluginManager().registerEvents(new PlayerListener(), this);
     }
 
@@ -75,5 +69,20 @@ public final class Monitor extends JavaPlugin {
         logger.log(Level.INFO, "插件已卸载");
         // 通知保存插件配置
         saveConfig();
+    }
+    public void LoadConfig(){
+        config.addDefault("boardCastType", "feishu");
+        config.addDefault("Feishu.app_id", "请填写app_id");
+        config.addDefault("Feishu.app_secret", "请填写app_secret");
+        config.addDefault("Feishu.sendGroup", "请填写需要推送到的群");
+        config.addDefault("Feishu.webHook", "");
+        config.addDefault("Monitor.items", "需要监测的方块信息，以,分割，需要是完整的方块注册名");
+        config.addDefault("Monitor.serverName", "服务器1");
+        config.options().copyDefaults(true);
+        saveConfig();
+
+    }
+    public void LoadCommand() {
+        getCommand("tpr").setExecutor(new Commands());
     }
 }
