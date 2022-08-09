@@ -1,4 +1,14 @@
-## [1.0.2](https://github.com/Leo12025/MonitorPlugin/compare/1.0.1...1.0.2) (2022-08-08)
+## [1.0.3](https://github.com/Leo12025/MonitorPlugin/compare/1.0.1...1.0.3) (2022-08-09)
+
+
+### Bug Fixes
+
+* **Config:** 修复默认配置文件 ([de5c4b0](https://github.com/Leo12025/MonitorPlugin/commit/de5c4b0e1efce0e0054ffc6537b28916081d073f))
+
+
+### Features
+
+* **功能:** 增加TPS和内存的监测 ([7e947b4](https://github.com/Leo12025/MonitorPlugin/commit/7e947b45b1cd2b6d426ddddecf2a42002ca30c6c))
 
 
 
