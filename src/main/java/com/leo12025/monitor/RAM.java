@@ -9,7 +9,7 @@ import static com.leo12025.monitor.Monitor.config;
 import static com.leo12025.monitor.PushFeishu.sendFeishuMessage;
 
 public class RAM implements Runnable {
-    private int ramPercent =config.getInt("Ram.ramPercent");;
+    private final int ramPercent = config.getInt("Ram.ramPercent");
 
     @Override
     public void run() {
@@ -23,8 +23,8 @@ public class RAM implements Runnable {
         if (ramPercent <= percentUsed) {
 
             // Log To Files Handling
-                    String message = "[%time%] 服务器内存不足! 服务器总内存: %max% | 已使用内存: %used% | 空闲内存: %free%";
-            message=message.replace("%time%", DateTimeFormatter.ofPattern("yyyy MMM dd EE HH:mm", Locale.CHINA).format(ZonedDateTime.now())).replace("%max%", String.valueOf(maxMemory)).replace("%used%", String.valueOf(usedMemory)).replace("%free%", String.valueOf(freeMemory));
+            String message = "[%time%] 服务器内存不足! 服务器总内存: %max% | 已使用内存: %used% | 空闲内存: %free%";
+            message = message.replace("%time%", DateTimeFormatter.ofPattern("yyyy MMM dd EE HH:mm", Locale.CHINA).format(ZonedDateTime.now())).replace("%max%", String.valueOf(maxMemory)).replace("%used%", String.valueOf(usedMemory)).replace("%free%", String.valueOf(freeMemory));
             sendFeishuMessage(message);
 
 

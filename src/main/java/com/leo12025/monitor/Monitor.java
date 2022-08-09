@@ -18,8 +18,8 @@ public final class Monitor extends JavaPlugin {
     public static File dataFolder;
     public static PluginLogger logger;
     public static FileConfiguration config;
+    public static Server server;
     private PluginLoader loader;
-    public static  Server server;
     private File file;
     private PluginDescriptionFile description;
     private ClassLoader classLoader;
@@ -32,7 +32,7 @@ public final class Monitor extends JavaPlugin {
         logger = new PluginLogger(this);
         logger.log(Level.INFO, "插件已被加载");
         this.loader = getPluginLoader();
-        this.server = getServer();
+        server = getServer();
         this.file = getFile();
         this.description = getDescription();
         dataFolder = getDataFolder();
@@ -60,11 +60,9 @@ public final class Monitor extends JavaPlugin {
         // LoadCommand();
         initMaterialChinese();
         server.getPluginManager().registerEvents(new PlayerListener(), this);
-        server.getScheduler().runTaskTimer(this, new TPS(), 300L,6000L);
-        server.getScheduler().runTaskTimer(this, new RAM(), 300L,6000L);
+        server.getScheduler().runTaskTimer(this, new TPS(), 300L, 6000L);
+        server.getScheduler().runTaskTimer(this, new RAM(), 300L, 6000L);
     }
-
-
 
 
     @Override
@@ -75,7 +73,8 @@ public final class Monitor extends JavaPlugin {
         // 通知保存插件配置
         saveConfig();
     }
-    public void LoadConfig(){
+
+    public void LoadConfig() {
         config.addDefault("boardCastType", "feishu");
         config.addDefault("Feishu.app_id", "请填写app_id");
         config.addDefault("Feishu.app_secret", "请填写app_secret");
@@ -83,14 +82,15 @@ public final class Monitor extends JavaPlugin {
         config.addDefault("Feishu.webHook", "");
         config.addDefault("Monitor.items", "需要监测的方块信息，以,分割，需要是完整的方块注册名");
         config.addDefault("Monitor.serverName", "服务器1");
-        config.addDefault("Ram.ramPercent", "90");
-        config.addDefault("Tps.tpsMedium", "16");
-        config.addDefault("Tps.tpsCritical", "7");
+        config.addDefault("Ram.ramPercent", 90);
+        config.addDefault("Tps.tpsMedium", 16);
+        config.addDefault("Tps.tpsCritical", 7);
 
         config.options().copyDefaults(true);
         saveConfig();
 
     }
+
     public void LoadCommand() {
         getCommand("tpr").setExecutor(new Commands());
     }
