@@ -59,7 +59,9 @@ public final class Monitor extends JavaPlugin {
 
         // LoadCommand();
         initMaterialChinese();
-        this.server.getPluginManager().registerEvents(new PlayerListener(), this);
+        server.getPluginManager().registerEvents(new PlayerListener(), this);
+        server.getScheduler().runTaskTimer(this, new TPS(), 300L,6000L);
+        server.getScheduler().runTaskTimer(this, new RAM(), 300L,6000L);
     }
 
 
@@ -81,6 +83,10 @@ public final class Monitor extends JavaPlugin {
         config.addDefault("Feishu.webHook", "");
         config.addDefault("Monitor.items", "需要监测的方块信息，以,分割，需要是完整的方块注册名");
         config.addDefault("Monitor.serverName", "服务器1");
+        config.addDefault("Ram.ramPercent", "90");
+        config.addDefault("Tps.tpsMedium", "16");
+        config.addDefault("Tps.tpsCritical", "7");
+
         config.options().copyDefaults(true);
         saveConfig();
 
