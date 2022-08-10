@@ -1,19 +1,24 @@
 package com.leo12025.monitor;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.logging.Level;
+
+import static com.leo12025.monitor.Monitor.logger;
 
 public class Commands implements CommandExecutor {
     @Override
-    public boolean onCommand(CommandSender Sender, Command Command, String Label, String[] Args) {
+    public boolean onCommand(@NotNull CommandSender Sender, @NotNull Command Command, @NotNull String Label, String[] Args) {
         //检查执行指令
-        if (Sender instanceof Player) {
+        if (Sender instanceof Player Player) {
             //玩家
 
             //获取到玩家
-            Player Player = (Player) Sender;
 
             Player_Command(Player, Args);
         } else {
@@ -24,16 +29,12 @@ public class Commands implements CommandExecutor {
         return false;
     }
 
-    public boolean Player_Command(Player Player, String[] Args) {
+    public void Player_Command(Player player, String[] Args) {
         //检查指令参数
         if (Args.length == 0) {
             //无参数
 
             //检查当前世界是否可用
-
-                return false;
-
-
 
 
         } else if (Args.length == 1) {
@@ -46,16 +47,15 @@ public class Commands implements CommandExecutor {
                     //历遍可用世界
 
 
-
-
-                //重载配置文件
+                    //重载配置文件
                 case "reload":
                     //检查玩家是否有插件管理权限
-                    if (!Player.hasPermission("newrandomtp.cooldown")) {
+                    if (!player.hasPermission("monitor.reload")) {
                         //不拥有
+                        player.sendMessage(ChatColor.GREEN + "您没有使用此命令的权限");
 
 
-                        return false;
+                        return;
                     }
 
                     break;
@@ -74,14 +74,13 @@ public class Commands implements CommandExecutor {
             //Player.sendMessage(NewRandomTP.Prefix + translateAlternateColorCodes('&', NewRandomTP.Message.getString("ParameterError")));
         }
 
-        return false;
     }
 
     public void Console_Command(String[] Args) {
         //检查指令参数
         if (Args.length == 0) {
             //无参数
-
+            logger.log(Level.INFO, "命令无效，输入 monitor help 来获取帮助");
             //发送信息给控制台
         } else if (Args.length == 1) {
             //有参数
@@ -94,11 +93,10 @@ public class Commands implements CommandExecutor {
 
                 //重载配置文件
                 case "reload":
-                              break;
+                    break;
 
                 //参数错误
                 default:
-
                     //发送信息给控制台
                     break;
             }
@@ -108,4 +106,6 @@ public class Commands implements CommandExecutor {
             //发送信息给控制台
         }
     }
+
+
 }

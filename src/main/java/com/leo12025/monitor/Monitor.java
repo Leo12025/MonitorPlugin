@@ -46,6 +46,9 @@ public final class Monitor extends JavaPlugin {
 
     }
 
+
+
+
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -57,8 +60,11 @@ public final class Monitor extends JavaPlugin {
         // Enable our class to check for new players using onPlayerJoin()
         //getCommand("monitor").setExecutor(new Commands());
 
-        // LoadCommand();
+        LoadCommand();
+
         initMaterialChinese();
+
+        // 注册事件
         server.getPluginManager().registerEvents(new PlayerListener(), this);
         server.getScheduler().runTaskTimer(this, new TPS(), 300L, 6000L);
         server.getScheduler().runTaskTimer(this, new RAM(), 300L, 6000L);
@@ -92,6 +98,6 @@ public final class Monitor extends JavaPlugin {
     }
 
     public void LoadCommand() {
-        getCommand("tpr").setExecutor(new Commands());
+        this.getCommand("monitor").setExecutor(new Commands());
     }
 }

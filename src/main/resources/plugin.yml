@@ -5,5 +5,5 @@ author: Leo12025
 api-version: 1.18
 
 commands:
-  tpr:
+  monitor:
     description: "插件主命令"
